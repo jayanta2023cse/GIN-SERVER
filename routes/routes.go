@@ -2,8 +2,8 @@
 package routes
 
 import (
+	"app/arrayvsslice"
 	"net/http"
-	"test/arrayvsslice"
 
 	"github.com/gin-gonic/gin"
 )

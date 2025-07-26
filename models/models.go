@@ -2,9 +2,9 @@
 package models
 
 import (
+	"app/config"
 	"fmt"
 	"log"
-	"test/config"
 	"time"
 
 	"gorm.io/driver/mysql"
@@ -41,6 +41,8 @@ func ConnectDB() (*gorm.DB, error) {
 		dialector = postgres.Open(dsn)
 
 	default:
+		err := fmt.Errorf("unsupported DB_DIALECT: %s", dialect)
+		log.Println("Database connection failed:", err)
 		return nil, fmt.Errorf("unsupported DB_DIALECT: %s", dialect)
 	}
 
@@ -49,11 +51,23 @@ func ConnectDB() (*gorm.DB, error) {
 		logLevel = logger.Info
 	}
 
-	db, err := gorm.Open(dialector, &gorm.Config{
-		Logger: logger.Default.LogMode(logLevel),
-	})
+	var db *gorm.DB
+	var err error
+
+	for i := 1; i <= 5; i++ {
+		db, err = gorm.Open(dialector, &gorm.Config{
+			Logger: logger.Default.LogMode(logLevel),
+		})
+		if err == nil {
+			break
+		}
+		log.Printf("Attempt %d: Database connection failed - %v", i, err)
+		time.Sleep(2 * time.Second)
+	}
+
 	if err != nil {
-		return nil, fmt.Errorf("connection failed: %w", err)
+		log.Println("All attempts to connect to the database failed. Check username, password, host, and port.")
+		return nil, fmt.Errorf("connection failed after retries: %w", err)
 	}
 
 	sqlDB, err := db.DB()

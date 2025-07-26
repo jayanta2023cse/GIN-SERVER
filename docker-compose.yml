@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  redis:
+    image: 'redis:latest'
+    ports:
+          - '6379:6379'
+    networks:
+          app-network:
+              # ipv4_address: 192.168.224.2
+
+  redis-commander:
+      image: 'rediscommander/redis-commander:latest'
+      environment:
+            - REDIS_HOSTS=local:redis:6379
+      ports:
+            - '8089:8081'
+      depends_on:
+            - redis
+      networks:
+            app-network:
+                # ipv4_address: 192.168.224.6
+                
+  app:
+    build:
+      dockerfile: Dockerfile
+    container_name: gin-app
+    ports:
+      - "8080:8080"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - redis
+    volumes:
+      - app-storage:/app/storage  # shared volume for file storage
+    networks:
+      - app-network
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # for Linux compatibility
+    restart: always
+
+volumes:
+  app-storage:
+
+networks:
+  app-network:

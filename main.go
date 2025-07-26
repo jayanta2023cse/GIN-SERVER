@@ -1,12 +1,11 @@
 package main
 
 import (
+	"app/middlewares"
+	"app/models"
+	"app/routes"
 	"log"
 	"os"
-	"test/middlewares"
-	"test/models"
-	"test/practicego"
-	"test/routes"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-delve/delve/pkg/config"
@@ -20,7 +19,7 @@ func main() {
 	models.ConnectDB()
 
 	// prperties
-	gin.DisableConsoleColor()
+	// gin.DisableConsoleColor()
 	gin.ForceConsoleColor()
 	gin.ErrorLogger()
 
@@ -44,6 +43,4 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Failed to run Gin server: %v", err)
 	}
-
-	practicego.Add(2, 4)
 }

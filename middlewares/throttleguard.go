@@ -1,10 +1,11 @@
+// Package middlewares handles application configuration, including loading environment variables.
 package middlewares
 
 import (
+	"app/config"
 	"net/http"
 	"strconv"
 	"sync"
-	"test/config"
 	"time"
 
 	"github.com/gin-gonic/gin"

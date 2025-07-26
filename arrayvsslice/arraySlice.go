@@ -2,9 +2,9 @@
 package arrayvsslice
 
 import (
+	"app/helpers"
 	"fmt"
 	"net/http"
-	"test/helpers"
 
 	"github.com/gin-gonic/gin"
 )
