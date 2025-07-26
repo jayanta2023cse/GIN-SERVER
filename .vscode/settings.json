@@ -1,0 +1,45 @@
+{
+  // Enable the Go language server (gopls)
+  "go.useLanguageServer": true,
+
+  // Configure gopls behavior
+  "gopls": {
+    "buildFlags": [],
+    "ui.completion.usePlaceholders": true,
+    "ui.semanticTokens": true,
+    "completeUnimported": true,
+    "staticcheck": true,
+    "analyses": {
+      "unusedparams": true,
+      "shadow": true,
+      "nilness": true,
+      "unusedwrite": true,
+      "unreachable": true
+    }
+  },
+
+  // Code formatting tool (default: gofmt)
+  "go.formatTool": "gofmt",
+
+  // Code linting tool
+  "go.lintTool": "golint",
+  "go.lintOnSave": "package",
+
+  // Run tests automatically when saving test files (optional)
+  "go.testOnSave": true,
+
+  // Enable goimports to auto-fix imports on save (optional but recommended)
+  "go.formatOnSave": true,
+  "go.languageServerExperimentalFeatures": {
+    "diagnostics": true
+  },
+
+  // Auto-update tools
+  "go.toolsManagement.autoUpdate": true,
+
+  // Optional: increase timeout for test runs if needed
+  "go.testTimeout": "30s",
+
+  // Optional: run go mod tidy on save
+  "go.tidyOnSave": true
+}
