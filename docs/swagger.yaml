@@ -1,0 +1,68 @@
+definitions:
+  dts.User:
+    properties:
+      age:
+        example: 24
+        type: integer
+      firstname:
+        example: This is the user firstname
+        type: string
+      id:
+        example: 1
+        type: integer
+      lastname:
+        example: This is the user lastname
+        type: string
+    required:
+    - age
+    - firstname
+    - lastname
+    type: object
+info:
+  contact: {}
+paths:
+  /api/v1/user/create:
+    post:
+      consumes:
+      - application/json
+      description: Add a new user item to the list
+      parameters:
+      - description: User item to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/dts.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created user item
+          schema:
+            $ref: '#/definitions/dts.User'
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Create a new user
+      tags:
+      - users
+  /api/v1/user/get:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve a list of all user items
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: List of users
+          schema:
+            items:
+              $ref: '#/definitions/dts.User'
+            type: array
+      summary: List all users
+      tags:
+      - users
+swagger: "2.0"

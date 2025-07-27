@@ -7,8 +7,12 @@ import (
 	"log"
 	"os"
 
+	_ "app/docs"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-delve/delve/pkg/config"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func main() {
@@ -32,6 +36,9 @@ func main() {
 
 	// Use separated routes
 	routes.SetupRoutes(router)
+
+	// Serve Swagger UI at /swagger/*any
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Start server with port from environment or default
 	port := os.Getenv("PORT")

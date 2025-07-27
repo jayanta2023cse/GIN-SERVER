@@ -36,4 +36,4 @@ ENV GO_ENV=prod
 EXPOSE 8080
 
 # Run the app
-CMD ["./app"]
+CMD ["/bin/app"]
