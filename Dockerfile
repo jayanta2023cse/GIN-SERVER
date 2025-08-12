@@ -33,7 +33,7 @@ COPY .env.prod /bin/.env.prod
 ENV GO_ENV=prod
 
 # Expose port your app listens on
-EXPOSE 8080
+EXPOSE 8090
 
 # Run the app
 CMD ["/bin/app"]

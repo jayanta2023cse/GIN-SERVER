@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     container_name: gin-app
     ports:
-      - "8080:8080"
+      - "8090:8090"
     stdin_open: true
     tty: true
     depends_on:
