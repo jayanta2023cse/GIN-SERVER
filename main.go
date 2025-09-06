@@ -1,6 +1,7 @@
 package main
 
 import (
+	"app/kafka"
 	"app/middlewares"
 	"app/models"
 	"app/routes"
@@ -22,6 +23,9 @@ func main() {
 	// Get DB connection (example)
 	models.ConnectDB()
 
+	// Initialize Kafka
+	kafka.InitKafka()
+
 	// prperties
 	// gin.DisableConsoleColor()
 	gin.ForceConsoleColor()
@@ -30,13 +34,10 @@ func main() {
 	// Create Gin router
 	router := gin.Default()
 	router.SetTrustedProxies(nil)
-
 	// middlewares
 	router.Use(middlewares.ThrottleGuard())
-
 	// Use separated routes
 	routes.SetupRoutes(router)
-
 	// Serve Swagger UI at /swagger/*any
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -50,4 +51,8 @@ func main() {
 	if err := router.Run(":" + port); err != nil {
 		log.Fatalf("Failed to run Gin server: %v", err)
 	}
+
+	// Close Kafka resources
+	// defer kafka.CloseProducer()
+	// defer kafka.CloseConsumer()
 }

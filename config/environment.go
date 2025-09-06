@@ -19,6 +19,9 @@ type Configuration struct {
 	DBDebug         string
 	ThrottleTTL     string
 	ThrottleLimit   string
+	KafkaBroker     string
+	KafkaTopic      string
+	KafkaGroupID    string
 }
 
 var AppConfig Configuration
@@ -49,6 +52,9 @@ func init() {
 		DBDebug:         os.Getenv("DB_DEBUG"),
 		ThrottleTTL:     os.Getenv("THROTTLE_TTL"),
 		ThrottleLimit:   os.Getenv("THROTTLE_LIMIT"),
+		KafkaBroker:     os.Getenv("KAFKA_BROKER"),
+		KafkaTopic:      os.Getenv("KAFKA_TOPIC"),
+		KafkaGroupID:    os.Getenv("KAFKA_GROUP_ID"),
 	}
 	log.Println("Loading the", AppConfig.EnvironmentName)
 }

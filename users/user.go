@@ -44,5 +44,13 @@ func (e Users) CreateUser(c *gin.Context) {
 	lastID++
 	user.ID = lastID
 	listOfUsers = append(listOfUsers, user)
+
+	// messageKey := constants.UserModule
+	// messageValue := fmt.Sprintf("New user created: %+v", user) // message content
+	// if err := kafka.PublishMessage(messageKey, messageValue); err != nil {
+	// 	log.Printf("Failed to send Kafka message: %v", err)
+	// 	// optional: you can still return success to client
+	// }
+
 	c.JSON(http.StatusCreated, user)
 }

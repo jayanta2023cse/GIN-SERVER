@@ -1,23 +1,54 @@
+version: "3.8"
+
 services:
-  redis:
-    image: 'redis:latest'
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
     ports:
-          - '6379:6379'
+      - "2181:2181"
     networks:
-          app-network:
-              # ipv4_address: 192.168.224.2
+      - app-network
+
+  kafka:
+    image: confluentinc/cp-kafka:7.3.0
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9093:9093"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,EXTERNAL://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,EXTERNAL://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_NUM_PARTITIONS: 1
+    networks:
+      - app-network
+
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
+    networks:
+      app-network:
+        # ipv4_address: 192.168.224.2
 
   redis-commander:
-      image: 'rediscommander/redis-commander:latest'
-      environment:
-            - REDIS_HOSTS=local:redis:6379
-      ports:
-            - '8089:8081'
-      depends_on:
-            - redis
-      networks:
-            app-network:
-                # ipv4_address: 192.168.224.6
+    image: "rediscommander/redis-commander:latest"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8089:8081"
+    depends_on:
+      - redis
+    networks:
+      app-network:
+        # ipv4_address: 192.168.224.6
 
   app:
     build:
@@ -29,12 +60,13 @@ services:
     tty: true
     depends_on:
       - redis
+      - kafka
     volumes:
-      - app-storage:/app/storage  # shared volume for file storage
+      - app-storage:/app/storage # shared volume for file storage
     networks:
       - app-network
     extra_hosts:
-      - "host.docker.internal:host-gateway"  # for Linux compatibility
+      - "host.docker.internal:host-gateway" # for Linux compatibility
     restart: always
 
 volumes:
@@ -42,3 +74,4 @@ volumes:
 
 networks:
   app-network:
+    driver: bridge
