@@ -3,7 +3,9 @@ package kafka
 
 import (
 	"app/config"
+	"app/websocket"
 	"context"
+	"encoding/json"
 	"log"
 
 	"github.com/IBM/sarama"
@@ -130,8 +132,23 @@ func (consumer *Consumer) Cleanup(_ sarama.ConsumerGroupSession) error {
 
 func (consumer *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
 	for message := range claim.Messages() {
-		log.Printf("Message received: topic=%s, partition=%d, offset=%d, value=%s",
-			message.Topic, message.Partition, message.Offset, string(message.Value))
+		log.Printf("Message received: topic=%s, partition=%d, offset=%d, value=%s", message.Topic, message.Partition, message.Offset, string(message.Value))
+
+		// Send kafka Message to WebSocket clients
+		var kafkaMsg map[string]interface{}
+		if err := json.Unmarshal(message.Value, &kafkaMsg); err != nil {
+			// Not JSON → fallback
+			websocket.EmitMessageToTopic(message.Topic, string(message.Value))
+		} else {
+			// JSON message
+			topic, ok := kafkaMsg["topic"].(string)
+			if !ok {
+				topic = message.Topic // fallback
+			}
+			data := kafkaMsg["data"]
+			websocket.EmitMessageToTopic(topic, data)
+		}
+
 		session.MarkMessage(message, "")
 	}
 	return nil
